@@ -1,0 +1,44 @@
+use std::io;
+
+fn main() {
+    loop {
+        println!("Select operation: 1. Add  2. Subtract  3. Multiply  4. Divide  5. Exit");
+        let choice: u32 = read_input("Enter your choice");
+
+        if choice == 5 {
+            println!("Exiting the calculator.");
+            break;
+        }
+
+        let (num1, num2): (f64, f64) = (read_input("Enter the first number"), read_input("Enter the second number"));
+
+        match choice {
+            1 => calculate(&num1, &num2, |a, b| a + b),
+            2 => calculate(&num1, &num2, |a, b| a - b),
+            3 => calculate(&num1, &num2, |a, b| a * b),
+            4 => {
+                if num2 == 0.0 {
+                    println!("Error: Cannot divide by zero.");
+                } else {
+                    calculate(&num1, &num2, |a, b| a / b);
+                }
+            }
+            _ => println!("Invalid choice. Please select a valid operation."),
+        }
+    }
+}
+
+fn read_input(prompt: &str) -> f64 {
+    println!("{}", prompt);
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).expect("Failed to read line");
+    input.trim().parse().expect("Invalid input. Please enter a valid number.")
+}
+
+fn calculate<F>(num1: &f64, num2: &f64, operation: F)
+where
+    F: Fn(f64, f64) -> f64,
+{
+    let result = operation(*num1, *num2);
+    println!("Result: {}", result);
+}
